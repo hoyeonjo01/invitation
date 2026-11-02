@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1, viewport-fit=cover"
+  />
+  <meta name="theme-color" content="#ffffff" />
+
+  <title>미리 메리 크리스마스</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: #ffffff;
+      font-family: Arial, "Apple SD Gothic Neo", sans-serif;
+    }
+
+    main {
+      min-height: 100vh;
+      min-height: 100svh;
+      padding: 24px 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 18px;
+    }
+
+    /* 휴대폰의 너비와 높이에 맞춰 카드 크기를 조절 */
+    .card {
+      width: min(100%, 480px);
+      width: min(100%, 480px, calc((100svh - 100px) * 0.6992));
+      aspect-ratio: 1016 / 1453;
+
+      position: relative;
+      padding: 0;
+      border: none;
+      border-radius: 0;
+      background: transparent;
+
+      perspective: 1600px;
+      cursor: pointer;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .card:focus-visible {
+      outline: 3px solid #003cff;
+      outline-offset: 6px;
+    }
+
+    /* 앞뒷면이 함께 회전하는 부분 */
+    .card-inner {
+      position: absolute;
+      inset: 0;
+      transform-style: preserve-3d;
+      transition: transform 0.7s cubic-bezier(0.22, 0.7, 0.22, 1);
+    }
+
+    .card.is-flipped .card-inner {
+      transform: rotateY(180deg);
+    }
+
+    .card-face {
+      position: absolute;
+      inset: 0;
+      display: block;
+      overflow: hidden;
+
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+    }
+
+    .card-front {
+      transform: rotateY(0deg);
+    }
+
+    .card-back {
+      transform: rotateY(180deg);
+      background: #ff008c;
+    }
+
+    .card-face img {
+      display: block;
+      position: absolute;
+      top: 0;
+      left: 0;
+
+      width: 100%;
+      height: 100%;
+      max-width: none;
+
+      pointer-events: none;
+      user-select: none;
+      -webkit-user-drag: none;
+    }
+
+    /* 현재 뒷면 파일의 회색 여백을 화면에서 제외 */
+    .card-back img {
+      width: calc(100% * 1369 / 1017);
+      height: calc(100% * 1684 / 1453);
+    }
+
+    .hint {
+      margin: 0;
+      color: #666666;
+      font-size: 12px;
+      line-height: 1.5;
+      text-align: center;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .card-inner {
+        transition: none;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main>
+    <button
+      class="card"
+      type="button"
+      aria-label="초대장 뒷면 보기"
+      aria-pressed="false"
+      aria-describedby="hint"
+    >
+      <span class="card-inner">
+        <span class="card-face card-front">
+          <img
+            src="./front.png"
+            alt="크리스마스트리와 선물이 담긴 초대장 앞면"
+            draggable="false"
+          />
+        </span>
+
+        <span class="card-face card-back" aria-hidden="true">
+          <img
+            src="./back.png"
+            alt="미리 메리 크리스마스에 초대합니다. 2026년 11월 15일 오후 6시부터. 드레스코드: 크리스마스."
+            draggable="false"
+          />
+        </span>
+      </span>
+    </button>
+
+    <p class="hint" id="hint" aria-live="polite">
+      초대장을 터치해서 뒤집어보세요
+    </p>
+  </main>
+
+  <script>
+    const card = document.querySelector(".card");
+    const front = document.querySelector(".card-front");
+    const back = document.querySelector(".card-back");
+    const hint = document.querySelector(".hint");
+
+    card.addEventListener("click", () => {
+      const flipped = card.classList.toggle("is-flipped");
+
+      card.setAttribute("aria-pressed", String(flipped));
+      card.setAttribute(
+        "aria-label",
+        flipped ? "초대장 앞면 보기" : "초대장 뒷면 보기"
+      );
+
+      front.setAttribute("aria-hidden", String(flipped));
+      back.setAttribute("aria-hidden", String(!flipped));
+
+      hint.textContent = flipped
+        ? "다시 터치하면 앞면으로 돌아가요"
+        : "초대장을 터치해서 뒤집어보세요";
+    });
+  </script>
+</body>
+</html>
